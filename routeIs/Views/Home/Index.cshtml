@@ -1,0 +1,132 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+
+</head>
+<li class="nav-item">
+    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+</li>
+<h4>Введите точки маршрута</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div class="text-danger"></div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <input id="fromPoint" placeholder="Откуда" class="form-control" />
+                <span class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label"></label>
+                <input id="inPoint" placeholder="Куда" class="form-control" />
+                <span class="text-danger"></span>
+            </div>
+
+            <input type="button" id="createRoute" value="Построить" class="btn btn-primary" />
+        </form>
+    </div>
+    <div class="form-group"><input type="button" id="editor" value="Включить редактор маршрута" name="start" class="btn btn-primary" /> </div>
+    <div class="form-group"><input type="button" id="save" value="Сохранить" name="start" class="btn btn-primary" /> </div>
+</div>
+
+<div id="YMapsID" style="width: 1400px; height: 800px;"></div>
+@if (User.IsInRole("user"))
+{@*строить маршруты смогут только зарегистрированные пользователи*@
+<script type="text/javascript">
+
+    ymaps.ready(function () {
+
+        var map = new ymaps.Map("YMapsID", {
+            center: [55.76, 37.64], // Москва
+            zoom: 10,
+
+            controls: ['zoomControl', 'typeSelector', 'fullscreenControl', 'searchControl']
+        }, {
+            searchControlProvider: 'yandex#search'
+        });
+        var multiRoute;
+
+        $('#createRoute').click(function () {
+            let pointOne = $('#fromPoint').val();
+            let pointTwo = $('#inPoint').val();
+            multiRoute = new ymaps.multiRouter.MultiRoute({
+                referencePoints: [pointOne, pointTwo]
+            }, {
+                editorDrawOver: false,
+                editorMidPointsType: "via"
+            })
+            map.geoObjects.add(multiRoute);
+        });
+
+        $('#editor').click(function () {
+            multiRoute.editor.start({ addWayPoints: true, removeWayPoints: true, addMidPoints: true });
+            //нажать на линию маршрута и потянуть - задание транизитной точки
+            //двойной клик по точке - удаление
+            map.geoObjects.add(multiRoute);
+        });
+
+        /*************вытащить элементы коллекции ввиде строк и передать в контроллер******/
+
+        $('#save').click(function () {
+            var wayPoints = multiRoute.getWayPoints(); //коллекция транзитных точек
+            //var point;
+            wayPoints.each(function (point) {
+                name = wayPoints.each,
+                    function () {
+                        return this.name;
+                    };
+                alert(point.properties._data.address); //вывод адресов точек
+                $.get(
+                    "@Url.Action("RouteController/", "CreateRoute")", new {names = point.properties._data.address});
+            });
+
+        });
+    });
+        //if (ymaps.control.RoutePanel.isEnable()) {
+        //    var InfoButton = new ymaps.control.Button({
+        //        data: { content: "Сохранить маршрут", title: "Добавить точки в БД" },
+        //        options: { selectOnClick: false, maxWidth: 160 }
+        //    });
+        //    // Объявляем обработчик для кнопки.
+        //    InfoButton.events.add('click', function () {
+        //        // Меняет местами начальную и конечную точки маршрута.
+        //        console.log(ymaps.control.RoutePanel.hasOwnProperty);
+        //    });
+        //    };
+
+        //    //ymaps.multiRouter.model.events.add('requestsuccess', function () {
+        //    // Получение ссылки на активный маршрут.
+
+        //    var activeRoute = ymaps.multiRouter.getActiveRoute();
+        //    //получение списка путевых точек
+        //    var wayPoints = multiRoute.getWayPoints();
+        //    console.log(wayPoints.text);
+        //    // Проход по коллекции путевых точек.
+        //    // Для каждой точки зададим содержимое меток.
+        //    wayPoints.each(function (point) {
+        //        point.options.set({
+        //            preset: "islands#redStretchyIcon",
+        //            // В качестве содержимого метки установим адрес точки маршрута.
+        //            iconContentLayout: ymaps.templateLayoutFactory.createClass('{{ properties.request|raw }}')
+
+        //        });
+        //    });
+        //});
+        ymaps.modules.require(['Placemark', 'Circle'], function (Placemark, Circle) {
+            var placemark = new Placemark([55.37, 35.45]);
+        });
+
+
+</script>
+}
+<body>
+    <div id="YMapsID"></div>
+    @*<div class="form-group">
+        <input type="button" id="editor" value="Включить редактор маршрута" name="start" class="btn btn-primary" /></div>*@
+    @*<button value="Включить редактор маршрута" id="editor" name="start">Включить редактор маршрута</button>*@
+        <a class="nav-link text-dark" asp-area="" asp-controller="Route" asp-action="Index">Просмотр созданных маршрутов</a>
+</body>
+

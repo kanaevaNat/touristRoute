@@ -1,0 +1,31 @@
+﻿@model IEnumerable<routeIs.Models.Route>
+@{
+    ViewData["Title"] = "Список маршрутов";
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Маршруты</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <td>Название</td>
+            <td>Дата создания</td>
+            <td>Комментарий</td>
+            <td></td>
+        </tr>
+        @foreach (var route in Model)
+        {
+            <tr>
+                <td>@route.Name</td>
+                <td>@route.DateOfCreate</td>
+                <td>@route.Comment</td>
+                <td><a href="~/Route/Delete/@route.Id">Удалить</a></td>
+            </tr>
+        }
+    </table>
+</body>
+</html>
