@@ -32,7 +32,7 @@ namespace routeIs.Controllers
             [Authorize]
             public IActionResult Index()
             {
-                return Content(User.Identity.Name);
+                return View();
             }
         
     }

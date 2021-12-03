@@ -5,9 +5,7 @@
 <head>
 
 </head>
-<li class="nav-item">
-    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-</li>
+
 <h4>Введите точки маршрута</h4>
 <hr />
 <div class="row">
@@ -28,13 +26,10 @@
             <input type="button" id="createRoute" value="Построить" class="btn btn-primary" />
         </form>
     </div>
-    <div class="form-group"><input type="button" id="editor" value="Включить редактор маршрута" name="start" class="btn btn-primary" /> </div>
     <div class="form-group"><input type="button" id="save" value="Сохранить" name="start" class="btn btn-primary" /> </div>
 </div>
 
 <div id="YMapsID" style="width: 1400px; height: 800px;"></div>
-@if (User.IsInRole("user"))
-{@*строить маршруты смогут только зарегистрированные пользователи*@
 <script type="text/javascript">
 
     ymaps.ready(function () {
@@ -121,7 +116,7 @@
 
 
 </script>
-}
+
 <body>
     <div id="YMapsID"></div>
     @*<div class="form-group">
